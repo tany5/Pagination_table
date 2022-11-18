@@ -1,0 +1,21 @@
+<mat-form-field appearance="outline">
+    <mat-label>{{label}}</mat-label>
+    <input matInput placeholder="name" [type]="type" [placeholder]="placeholder" [formControl]="control">
+    <mat-error *ngIf="control.touched && control.errors">
+        <ng-container *ngIf="control.errors['required']">
+            {{label}} is required
+        </ng-container>
+        <ng-container *ngIf="control.errors['email']">
+            {{label}} is not a valid email
+        </ng-container>
+        <ng-container *ngIf="control.errors['pattern']">
+            {{label}} is not valid 
+        </ng-container>
+        <ng-container *ngIf="control.errors['minlength']">
+            {{label}} minlength 
+        </ng-container>
+        <ng-container *ngIf="control.errors['maxlength']">
+            {{label}} maxlength 
+        </ng-container>
+    </mat-error>
+</mat-form-field>   
