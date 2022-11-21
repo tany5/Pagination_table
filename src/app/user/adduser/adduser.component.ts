@@ -1,7 +1,8 @@
+import { Subscription } from 'rxjs';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import IUserData from 'src/app/shared/models/user';
 import { UserService } from './../../shared/services/user.service';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -9,9 +10,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   templateUrl: './adduser.component.html',
   styleUrls: ['./adduser.component.scss']
 })
-export class AdduserComponent implements OnInit {
+export class AdduserComponent implements OnInit, OnDestroy {
   constructor(private userService: UserService, private modalDialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: IUserData) {
   }
+
+  addUser$: Subscription | undefined
+  editUser$: Subscription | undefined
 
   first_name = new FormControl('', [Validators.required])
   last_name = new FormControl('', [Validators.required])
@@ -38,7 +42,7 @@ export class AdduserComponent implements OnInit {
 
   addUser() {
     if (this.addUserForm.valid && !this.data) {
-      this.userService.addUser(this.addUserForm.value as IUserData).subscribe({
+      this.addUser$ = this.userService.addUser(this.addUserForm.value as IUserData).subscribe({
         next: () => {
           this.modalDialog.closeAll()
         },
@@ -48,8 +52,7 @@ export class AdduserComponent implements OnInit {
       })
     }
     else {
-      console.log("Edit")
-      this.userService.editUser(this.addUserForm.value as IUserData, this.data.id).subscribe({
+      this.editUser$ = this.userService.editUser(this.addUserForm.value as IUserData, this.data.id).subscribe({
         next: (data) => {
           console.log(data)
           this.modalDialog.closeAll()
@@ -59,6 +62,11 @@ export class AdduserComponent implements OnInit {
         }
       })
     }
-  } 
+  }
+
+  ngOnDestroy(): void {
+    this.editUser$?.unsubscribe()
+    this.addUser$?.unsubscribe()
+  }
 
 }

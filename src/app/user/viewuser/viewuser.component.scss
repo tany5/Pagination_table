@@ -1,3 +1,7 @@
 .example-header-image {
-    background-size: cover;
-  }
+  background-size: cover;
+}
+
+.mat-card:not([class*=mat-elevation-z]) {
+  box-shadow: none
+}
